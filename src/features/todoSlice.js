@@ -1,32 +1,31 @@
+import { createSlice } from '@reduxjs/toolkit'
 
-import React, { useState } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { addTodo, removeOne, clearTodo } from './features/todoSlice'
-
-function Todo() {
-    const items = useSelector((state) => state.todos.items)
-    const dispatch = useDispatch()
-    const [input, setInput] = useState('')
-
-    const renderItems = items.map((item, index) => <li key={index} onClick={() => dispatch(removeOne(index))}>{item}</li>)
-
-    const submitForm = (e) => {
-        e.preventDefault()
-        dispatch(addTodo(input))
-    }
-
-    return (
-        <div>
-            <form onSubmit={(e) => submitForm(e)}>
-                <input type="text" onChange={(e) => setInput(e.target.value)} />
-                <button type="submit">Submit</button>
-            </form>
-            <ul>
-                {renderItems}
-            </ul>
-            <button onClick={() => dispatch(clearTodo())}>Clear</button>
-        </div>
-    )
+const initialState = {
+    items: []
 }
 
-export default Todo
+export const todoSlice = createSlice({
+    name: 'todos',
+    initialState,
+    reducers: {
+        addTodo: (state, action) => {
+            return { items: [...state.items, action.payload] }
+        },
+        removeOne: (state, action) => {
+            console.log(action)
+            let array = [...state.items]
+            let index = action.payload
+            if (index !== -1) {
+                array.splice(index, 1)
+                return { items: array }
+            }
+        },
+        clearTodo: () => {
+            return { items: [] }
+        }
+    }
+})
+
+export const { addTodo, removeOne, clearTodo } = todoSlice.actions
+
+export default todoSlice.reducer
